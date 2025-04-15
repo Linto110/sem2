@@ -1,4 +1,4 @@
-1.Write a MongoDB query to display the customer documents having city ‘ekm’,’tvm’.
+1.Write a MongoDB query to display the customer documents having city ‘EKM’,’TVM’.
 INVOICE> db.CUSTOMER.find({city:{$in:["EKM","TVM"]}})
 [
   {
@@ -21,7 +21,7 @@ INVOICE> db.PRODUCT.find({price:{$gt:50}})
     quantity: 5
   }
 ]
-3.write a MongoDB query to find customer documents who not live in ‘tvm’
+3.write a MongoDB query to find customer documents who not live in ‘TVM’
 
 INVOICE> db.CUSTOMER.find({city:{$ne:'TVM'}})
 [
