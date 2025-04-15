@@ -15,6 +15,8 @@ INVOICE> db.CUSTOMER.insertMany([{id:1,name:"Linto Emmanuel",city:"TVM",ph_no:84
   }
 }
 
+INVOICE> db.createCollection("PRODUCT")
+{ ok: 1 }
 INVOICE> db.PRODUCT.insertMany([{id:101,name:"plate",price:60,quantity:5},{id:102,name:"pen",price:10,quantity:10},{id:103,name:"soap",price:45,quantity:7}])
 {
   acknowledged: true,
