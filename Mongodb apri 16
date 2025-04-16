@@ -1,0 +1,744 @@
+INVOICE> db.CUSTOMER.insertMany([{id:1,name:"Linto Emmanuel",city:"TVM",ph_no:8489922983},{id:2,name:"Nihal K",city:"CLT",ph_no:7886436709},{id:3,name:"Jaseem",city:"EKM",ph_no:7865789004}])
+... 
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('67ff7068ae5a6d081bd861e0'),
+    '1': ObjectId('67ff7068ae5a6d081bd861e1'),
+    '2': ObjectId('67ff7068ae5a6d081bd861e2')
+  }
+}
+INVOICE> db.createCollection("PRODUCT")
+{ ok: 1 }
+INVOICE> db.PRODUCT.insertMany([{id:101,name:"plate",price:60,quantity:5},{id:102,name:"pen",price:10,quantity:10},{id:103,name:"soap",price:45,quantity:7}])
+... 
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('67ff7089ae5a6d081bd861e3'),
+    '1': ObjectId('67ff7089ae5a6d081bd861e4'),
+    '2': ObjectId('67ff7089ae5a6d081bd861e5')
+  }
+}
+INVOICE> db.CUSTOMER.find()
+[
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e0'),
+    id: 1,
+    name: 'Linto Emmanuel',
+    city: 'TVM',
+    ph_no: 8489922983
+  },
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e1'),
+    id: 2,
+    name: 'Nihal K',
+    city: 'CLT',
+    ph_no: 7886436709
+  },
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e2'),
+    id: 3,
+    name: 'Jaseem',
+    city: 'EKM',
+    ph_no: 7865789004
+  }
+]
+INVOICE> db.CUSTOMER.updateOne({id:1},{$set:{city:"Calicut"
+... 
+[1]+  Stopped                 mongosh
+(base) user@user-H410M-H-V2:~$ mongosh
+Current Mongosh Log ID:	67ff7114524cb9765dd861df
+Connecting to:		mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.5.0
+Using MongoDB:		7.0.19
+Using Mongosh:		2.5.0
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2025-04-16T14:23:47.148+05:30: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2025-04-16T14:23:47.542+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+   2025-04-16T14:23:47.542+05:30: vm.max_map_count is too low
+------
+
+test> USE INVOICE
+Uncaught:
+SyntaxError: Missing semicolon. (1:3)
+
+> 1 | USE INVOICE
+    |    ^
+  2 |
+
+test> use INVOICE
+switched to db INVOICE
+INVOICE> db.CUSTOMER.updateOne({id:1},{$set:{city:"Calicut"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+INVOICE> db.CUSTOMER.deleteOne({city:"Calicut"})
+{ acknowledged: true, deletedCount: 1 }
+INVOICE> db.CUSTOMER.find({city:{$in:["EKM","TVM"]}})
+[
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e2'),
+    id: 3,
+    name: 'Jaseem',
+    city: 'EKM',
+    ph_no: 7865789004
+  }
+]
+INVOICE> db.PRODUCT.find({price:{$gt:50}})
+[
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e3'),
+    id: 101,
+    name: 'plate',
+    price: 60,
+    quantity: 5
+  }
+]
+INVOICE> db.CUSTOMER.find({city:{$ne:"TVM"}})
+[
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e1'),
+    id: 2,
+    name: 'Nihal K',
+    city: 'CLT',
+    ph_no: 7886436709
+  },
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e2'),
+    id: 3,
+    name: 'Jaseem',
+    city: 'EKM',
+    ph_no: 7865789004
+  }
+]
+INVOICE> db.CUSTOMER.find().sort(1)
+MongoInvalidArgumentError: Invalid sort format: 1 Sort must be a valid object
+INVOICE> db.CUSTOMER.find().sort({name:1})
+[
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e2'),
+    id: 3,
+    name: 'Jaseem',
+    city: 'EKM',
+    ph_no: 7865789004
+  },
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e1'),
+    id: 2,
+    name: 'Nihal K',
+    city: 'CLT',
+    ph_no: 7886436709
+  }
+]
+INVOICE> db.CUSTOMER.aggregate([{$group:{id:"$city",total_customers:$sum}}])
+ReferenceError: $sum is not defined
+INVOICE> db.CUSTOMER.aggregate([{$group:{id:"$city",total_customers:{$sum}}}])
+ReferenceError: $sum is not defined
+INVOICE> db.CUSTOMER.aggregate([{$group:{id:"$city",total_customers:{$sum:1}}}])
+MongoServerError[Location40234]: The field 'id' must be an accumulator object
+INVOICE> db.CUSTOMER.aggregate([{$group:{_id:"$city",total_customers:{$sum:1}}}])
+[
+  { _id: 'CLT', total_customers: 1 },
+  { _id: 'EKM', total_customers: 1 }
+]
+INVOICE> db.CUSTOMER.updateONe({id:1},{set:{age:17}})
+TypeError: db.CUSTOMER.updateONe is not a function
+INVOICE> db.CUSTOMER.updateOne({id:1},{set:{age:17}})
+MongoInvalidArgumentError: Update document requires atomic operators
+INVOICE> db.CUSTOMER.updateOne({id:1},{$set:{age:17}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+INVOICE> db.CUSTOMER.updateOne({id:2},{$set:{age:19}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+INVOICE> db.CUSTOMER.updateOne({id:3},{$set:{age:30}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+INVOICE> db.CUSTOMER.find()
+[
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e1'),
+    id: 2,
+    name: 'Nihal K',
+    city: 'CLT',
+    ph_no: 7886436709,
+    age: 19
+  },
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e2'),
+    id: 3,
+    name: 'Jaseem',
+    city: 'EKM',
+    ph_no: 7865789004,
+    age: 30
+  }
+]
+INVOICE> db.CUSTOMER.insertMany({id:4,name:"Roshan",city:"CLT",ph_no:7865780959,age:25},{id:5,name:"Aysha",city:"EKM"ph_no:8976567800,age:22})
+Uncaught:
+SyntaxError: Unexpected token, expected "," (1:108)
+
+> 1 | db.CUSTOMER.insertMany({id:4,name:"Roshan",city:"CLT",ph_no:7865780959,age:25},{id:5,name:"Aysha",city:"EKM"ph_no:8976567800,age:22})
+    |                                                                                                             ^
+  2 |
+
+INVOICE> db.CUSTOMER.insertMany({id:4,name:"Roshan",city:"CLT",ph_no:7865780959,age:25},{id:5,name:"Aysha",city:"EKM",ph_no:8976567800,age:22})
+MongoInvalidArgumentError: Argument "docs" must be an array of documents
+INVOICE> db.CUSTOMER.insertMany([{id:4,name:"Roshan",city:"CLT",ph_no:7865780959,age:25},{id:5,name:"Aysha",city:"EKM",ph_no:8976567800,age:22}])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('67ff77bc524cb9765dd861e0'),
+    '1': ObjectId('67ff77bc524cb9765dd861e1')
+  }
+}
+INVOICE> db.CUSTOMER.aggregate([{$group:{_id:1,max_age:{$max:"$age"},min_age:{$min:"$age"}}}])
+[ { _id: 1, max_age: 30, min_age: 19 } ]
+INVOICE> db.CUSTOMER.aggregate([{$group:{_id:city,max_age:{$max:"$age"},min_age:{$min:"$age"}}}])
+ReferenceError: city is not defined
+INVOICE> db.CUSTOMER.aggregate([{$group:{_id:"city",max_age:{$max:"$age"},min_age:{$min:"$age"}}}])
+[ { _id: 'city', max_age: 30, min_age: 19 } ]
+INVOICE> db.CUSTOMER.aggregate([{$group:{_id:"$city",max_age:{$max:"$age"},min_age:{$min:"$age"}}}])
+[
+  { _id: 'EKM', max_age: 30, min_age: 22 },
+  { _id: 'CLT', max_age: 25, min_age: 19 }
+]
+INVOICE> db.CUSTOMER.aggregate([{$group:{_city:"$city",max_age:{$max:"$age"},min_age:{$min:"$age"}}}])
+MongoServerError[Location40234]: The field '_city' must be an accumulator object
+INVOICE> db.CUSTOMER.aggregate([{$group:{city:"$city",max_age:{$max:"$age"},min_age:{$min:"$age"}}}])
+MongoServerError[Location40234]: The field 'city' must be an accumulator object
+INVOICE> db.CUSTOMER.aggregate([{$group:{_place:"$city",max_age:{$max:"$age"},min_age:{$min:"$age"}}}])
+MongoServerError[Location40234]: The field '_place' must be an accumulator object
+INVOICE> db.CUSTOMER.aggregate([{$group:{_id:"$city",max_age:{$max:"$age"},min_age:{$min:"$age"}}}])
+[
+  { _id: 'EKM', max_age: 30, min_age: 22 },
+  { _id: 'CLT', max_age: 25, min_age: 19 }
+]
+INVOICE> db.CUSTOMER.aggregate([{$name:{regex:|Ss|}}])
+Uncaught:
+SyntaxError: Unexpected token (1:37)
+
+> 1 | db.CUSTOMER.aggregate([{$name:{regex:|Ss|}}])
+    |                                      ^
+  2 |
+
+INVOICE> db.CUSTOMER.aggregate([{ $match: { name: { $regex: "s", $options: "i" }}}])
+[
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e2'),
+    id: 3,
+    name: 'Jaseem',
+    city: 'EKM',
+    ph_no: 7865789004,
+    age: 30
+  },
+  {
+    _id: ObjectId('67ff77bc524cb9765dd861e0'),
+    id: 4,
+    name: 'Roshan',
+    city: 'CLT',
+    ph_no: 7865780959,
+    age: 25
+  },
+  {
+    _id: ObjectId('67ff77bc524cb9765dd861e1'),
+    id: 5,
+    name: 'Aysha',
+    city: 'EKM',
+    ph_no: 8976567800,
+    age: 22
+  }
+]
+INVOICE> db.CUSTOMER.aggregate([{ $match: { name: { $regex: "^R", $options: "i" }}}])
+[
+  {
+    _id: ObjectId('67ff77bc524cb9765dd861e0'),
+    id: 4,
+    name: 'Roshan',
+    city: 'CLT',
+    ph_no: 7865780959,
+    age: 25
+  }
+]
+INVOICE> db.CUSTOMER.aggregate([{ $match: { name: { $regex: "^a", $options: "i" }}}])
+[
+  {
+    _id: ObjectId('67ff77bc524cb9765dd861e1'),
+    id: 5,
+    name: 'Aysha',
+    city: 'EKM',
+    ph_no: 8976567800,
+    age: 22
+  }
+]
+INVOICE> INVOICE> db.CUSTOMER.aggregate([{ $match: { name: { $regex: "^a", $options: "i" }}}])
+... [
+...   {
+...     _id: ObjectId('67ff77bc524cb9765dd861e1'),
+...     id: 5,
+...     name: 'Aysha',
+...     city: 'EKM',
+...     ph_no: 8976567800,
+...     age: 22
+...   }
+... ]
+... 
+ReferenceError: INVOICE is not defined
+INVOICE> db.CUSTOMER.aggregate([{ $match: { name: { $regex: "^a", $options: "i" }}}])
+... 
+[
+  {
+    _id: ObjectId('67ff77bc524cb9765dd861e1'),
+    id: 5,
+    name: 'Aysha',
+    city: 'EKM',
+    ph_no: 8976567800,
+    age: 22
+  }
+]
+INVOICE> db.createCollection("ORDERS")
+{ ok: 1 }
+INVOICE> db.ORDERS.aggregate([{$lookup:{from "CUSTOMER",name:"$name"db.CUSTOMER.updateOne({id:2},{$set:{age:19}})
+... 
+INVOICE> db.CUSTOMER.updateOne({id:2},{$set:{age:19}})
+... 
+INVOICE> db.PROCUT.find()
+
+INVOICE> db.PRODCUT.find()
+
+INVOICE> db.PRODUCT.find()
+[
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e3'),
+    id: 101,
+    name: 'plate',
+    price: 60,
+    quantity: 5
+  },
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e4'),
+    id: 102,
+    name: 'pen',
+    price: 10,
+    quantity: 10
+  },
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e5'),
+    id: 103,
+    name: 'soap',
+    price: 45,
+    quantity: 7
+  }
+]
+INVOICE> db.CUSTOMER.updateOne({id:101},{$set:{C:19}})
+db.CUSTOMER.updateOne({id:101},{$set:{case                     db.CUSTOMER.updateOne({id:101},{$set:{catch
+db.CUSTOMER.updateOne({id:101},{$set:{const                    db.CUSTOMER.updateOne({id:101},{$set:{continue
+db.CUSTOMER.updateOne({id:101},{$set:{                         db.CUSTOMER.updateOne({id:101},{$set:{Code
+db.CUSTOMER.updateOne({id:101},{$set:{CompressionStream        db.CUSTOMER.updateOne({id:101},{$set:{CountQueuingStrategy
+db.CUSTOMER.updateOne({id:101},{$set:{Crypto                   db.CUSTOMER.updateOne({id:101},{$set:{CryptoKey
+db.CUSTOMER.updateOne({id:101},{$set:{CustomEvent              db.CUSTOMER.updateOne({id:101},{$set:{child_process
+db.CUSTOMER.updateOne({id:101},{$set:{clearImmediate           db.CUSTOMER.updateOne({id:101},{$set:{clearInterval
+db.CUSTOMER.updateOne({id:101},{$set:{clearTimeout             db.CUSTOMER.updateOne({id:101},{$set:{cls
+db.CUSTOMER.updateOne({id:101},{$set:{cluster                  db.CUSTOMER.updateOne({id:101},{$set:{config
+db.CUSTOMER.updateOne({id:101},{$set:{connect                  db.CUSTOMER.updateOne({id:101},{$set:{console
+db.CUSTOMER.updateOne({id:101},{$set:{constants                db.CUSTOMER.updateOne({id:101},{$set:{convertShardKeyToHashed
+db.CUSTOMER.updateOne({id:101},{$set:{crypto                   db.CUSTOMER.updateOne({id:101},{$set:{constructor
+db.Code
+
+INVOICE> db.CUSTOMER.updateOne({id:101},{$set:{C:19}})
+db.CUSTOMER.updateOne({id:101},{$set:{case                     db.CUSTOMER.updateOne({id:101},{$set:{catch
+db.CUSTOMER.updateOne({id:101},{$set:{const                    db.CUSTOMER.updateOne({id:101},{$set:{continue
+db.CUSTOMER.updateOne({id:101},{$set:{                         db.CUSTOMER.updateOne({id:101},{$set:{Code
+db.CUSTOMER.updateOne({id:101},{$set:{CompressionStream        db.CUSTOMER.updateOne({id:101},{$set:{CountQueuingStrategy
+db.CUSTOMER.updateOne({id:101},{$set:{Crypto                   db.CUSTOMER.updateOne({id:101},{$set:{CryptoKey
+db.CUSTOMER.updateOne({id:101},{$set:{CustomEvent              db.CUSTOMER.updateOne({id:101},{$set:{child_process
+db.CUSTOMER.updateOne({id:101},{$set:{clearImmediate           db.CUSTOMER.updateOne({id:101},{$set:{clearInterval
+db.CUSTOMER.updateOne({id:101},{$set:{clearTimeout             db.CUSTOMER.updateOne({id:101},{$set:{cls
+db.CUSTOMER.updateOne({id:101},{$set:{cluster                  db.CUSTOMER.updateOne({id:101},{$set:{config
+db.CUSTOMER.updateOne({id:101},{$set:{connect                  db.CUSTOMER.updateOne({id:101},{$set:{console
+db.CUSTOMER.updateOne({id:101},{$set:{constants                db.CUSTOMER.updateOne({id:101},{$set:{convertShardKeyToHashed
+db.CUSTOMER.updateOne({id:101},{$set:{crypto                   db.CUSTOMER.updateOne({id:101},{$set:{constructor
+db.Code
+
+INVOICE> db.CUSTOMER.updateOne({id:101},{$set:{cus_id:1}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+INVOICE> db.CUSTOMER.updateOne({id:102},{$set:{cus_id:2}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+INVOICE> db.CUSTOMER.updateOne({id:101},{$set:{cus_id:3}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+INVOICE> db.CUSTOMER.updateOne({id:101},{$set:{cus_id:3}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+INVOICE> db.PRODUCT.find()
+[
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e3'),
+    id: 101,
+    name: 'plate',
+    price: 60,
+    quantity: 5
+  },
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e4'),
+    id: 102,
+    name: 'pen',
+    price: 10,
+    quantity: 10
+  },
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e5'),
+    id: 103,
+    name: 'soap',
+    price: 45,
+    quantity: 7
+  }
+]
+INVOICE> db.CUSTOMER.find()
+[
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e1'),
+    id: 2,
+    name: 'Nihal K',
+    city: 'CLT',
+    ph_no: 7886436709,
+    age: 19
+  },
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e2'),
+    id: 3,
+    name: 'Jaseem',
+    city: 'EKM',
+    ph_no: 7865789004,
+    age: 30
+  },
+  {
+    _id: ObjectId('67ff77bc524cb9765dd861e0'),
+    id: 4,
+    name: 'Roshan',
+    city: 'CLT',
+    ph_no: 7865780959,
+    age: 25
+  },
+  {
+    _id: ObjectId('67ff77bc524cb9765dd861e1'),
+    id: 5,
+    name: 'Aysha',
+    city: 'EKM',
+    ph_no: 8976567800,
+    age: 22
+  }
+]
+INVOICE> db.PRODUCT.updateOne({id:101},{$set:{cus_id:2}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+INVOICE> db.PRODUCT.updateOne({id:102},{$set:{cus_id:3}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+INVOICE> db.PRODUCT.updateOne({id:103},{$set:{cus_id:4}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+INVOICE> db.CUSTOMER.find()
+[
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e1'),
+    id: 2,
+    name: 'Nihal K',
+    city: 'CLT',
+    ph_no: 7886436709,
+    age: 19
+  },
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e2'),
+    id: 3,
+    name: 'Jaseem',
+    city: 'EKM',
+    ph_no: 7865789004,
+    age: 30
+  },
+  {
+    _id: ObjectId('67ff77bc524cb9765dd861e0'),
+    id: 4,
+    name: 'Roshan',
+    city: 'CLT',
+    ph_no: 7865780959,
+    age: 25
+  },
+  {
+    _id: ObjectId('67ff77bc524cb9765dd861e1'),
+    id: 5,
+    name: 'Aysha',
+    city: 'EKM',
+    ph_no: 8976567800,
+    age: 22
+  }
+]
+INVOICE> db.PRODUCT.find()
+[
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e3'),
+    id: 101,
+    name: 'plate',
+    price: 60,
+    quantity: 5,
+    cus_id: 2
+  },
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e4'),
+    id: 102,
+    name: 'pen',
+    price: 10,
+    quantity: 10,
+    cus_id: 3
+  },
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e5'),
+    id: 103,
+    name: 'soap',
+    price: 45,
+    quantity: 7,
+    cus_id: 4
+  }
+]
+INVOICE> db.CUSTOMER.aggregate([{}])
+MongoServerError[Location40323]: A pipeline stage specification object must contain exactly one field.
+INVOICE> db.CUSTOMER.aggregate([{from :"PRODUCT",localfield:"id",foreignfield:"cus_id",as:"product_details"}])
+MongoServerError[Location40323]: A pipeline stage specification object must contain exactly one field.
+INVOICE> db.CUSTOMER.aggregate([{$lookup:{from :"PRODUCT",localfield:"id",foreignfield:"cus_id",as:"product_details"}}])
+MongoServerError[FailedToParse]: unknown argument to $lookup: localfield
+INVOICE> db.CUSTOMER.aggregate([{$lookup:{from :"PRODUCT",localfield:"_id",foreignfield:"cus_id",as:"product_details"}}])
+MongoServerError[FailedToParse]: unknown argument to $lookup: localfield
+INVOICE> db.CUSTOMER.aggregate([{$lookup:{from :"PRODUCT",localField:"id",foreignField:"cus_id",as:"product_details"}}])
+[
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e1'),
+    id: 2,
+    name: 'Nihal K',
+    city: 'CLT',
+    ph_no: 7886436709,
+    age: 19,
+    product_details: [
+      {
+        _id: ObjectId('67ff7089ae5a6d081bd861e3'),
+        id: 101,
+        name: 'plate',
+        price: 60,
+        quantity: 5,
+        cus_id: 2
+      }
+    ]
+  },
+  {
+    _id: ObjectId('67ff7068ae5a6d081bd861e2'),
+    id: 3,
+    name: 'Jaseem',
+    city: 'EKM',
+    ph_no: 7865789004,
+    age: 30,
+    product_details: [
+      {
+        _id: ObjectId('67ff7089ae5a6d081bd861e4'),
+        id: 102,
+        name: 'pen',
+        price: 10,
+        quantity: 10,
+        cus_id: 3
+      }
+    ]
+  },
+  {
+    _id: ObjectId('67ff77bc524cb9765dd861e0'),
+    id: 4,
+    name: 'Roshan',
+    city: 'CLT',
+    ph_no: 7865780959,
+    age: 25,
+    product_details: [
+      {
+        _id: ObjectId('67ff7089ae5a6d081bd861e5'),
+        id: 103,
+        name: 'soap',
+        price: 45,
+        quantity: 7,
+        cus_id: 4
+      }
+    ]
+  },
+  {
+    _id: ObjectId('67ff77bc524cb9765dd861e1'),
+    id: 5,
+    name: 'Aysha',
+    city: 'EKM',
+    ph_no: 8976567800,
+    age: 22,
+    product_details: []
+  }
+]
+INVOICE> db.CUSTOMER.aggregate([
+...   {
+...     $lookup: {
+...       from: "PRODUCT",
+...       localField: "id",
+...       foreignField: "cus_id",
+...       as: "product_details"
+...     }
+...   },
+...   {
+...     $project: {
+...       _id: 0,
+...       name: 1,
+...       product_details: {
+...         product_name: 1,
+...         price: 1
+...       }
+...     }
+...   }
+... ])
+... 
+[
+  { name: 'Nihal K', product_details: [ { price: 60 } ] },
+  { name: 'Jaseem', product_details: [ { price: 10 } ] },
+  { name: 'Roshan', product_details: [ { price: 45 } ] },
+  { name: 'Aysha', product_details: [] }
+]
+INVOICE> db.CUSTOMER.aggregate([{$lookup:{from:"PRODUCT",localField:"id",foreignField:"cus_id"}},$project:{_id:0,name:1,product_name:1,price:1}}])
+Uncaught:
+SyntaxError: Unexpected token, expected "," (1:96)
+
+> 1 | db.CUSTOMER.aggregate([{$lookup:{from:"PRODUCT",localField:"id",foreignField:"cus_id"}},$project:{_id:0,name:1,product_name:1,price:1}}])
+    |                                                                                                 ^
+  2 |
+
+INVOICE> db.CUSTOMER.aggregate([{$lookup:{from:"PRODUCT",localField:"id",foreignField:"cus_id",as:"product_details"}},{$project:{_id:0,name:1,product_details:{product_nproduct_name:1,price:1}}}])
+... 
+[
+  { name: 'Nihal K', product_details: [ { price: 60 } ] },
+  { name: 'Jaseem', product_details: [ { price: 10 } ] },
+  { name: 'Roshan', product_details: [ { price: 45 } ] },
+  { name: 'Aysha', product_details: [] }
+]
+INVOICE> db.PRODUCT.find()
+[
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e3'),
+    id: 101,
+    name: 'plate',
+    price: 60,
+    quantity: 5,
+    cus_id: 2
+  },
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e4'),
+    id: 102,
+    name: 'pen',
+    price: 10,
+    quantity: 10,
+    cus_id: 3
+  },
+  {
+    _id: ObjectId('67ff7089ae5a6d081bd861e5'),
+    id: 103,
+    name: 'soap',
+    price: 45,
+    quantity: 7,
+    cus_id: 4
+  }
+]
+INVOICE> db.CUSTOMER.aggregate([{$lookup:{from:"PRODUCT",localField:"id",foreignField:"cus_id",as:"product_details"}},{$unwind:"$product_details"},{$project:{_id:0,namename:1,product_name:"$product_details.product_name",price:"$product_details.price"}}])
+... 
+[
+  { name: 'Nihal K', price: 60 },
+  { name: 'Jaseem', price: 10 },
+  { name: 'Roshan', price: 45 }
+]
+INVOICE> db.CUSTOMER.aggregate([{$lookup:{from:"PRODUCT",localField:"id",foreignField:"cus_id",as:"product_details"}},{$project:{_id:0,name:1,product_details:{$map:{inpinput:"$product_details",as:"product",in:{product_name:"$$product.product_name",price:"$$product.price"}}}}}])
+... 
+[
+  { name: 'Nihal K', product_details: [ { price: 60 } ] },
+  { name: 'Jaseem', product_details: [ { price: 10 } ] },
+  { name: 'Roshan', product_details: [ { price: 45 } ] },
+  { name: 'Aysha', product_details: [] }
+]
+INVOICE> db.CUSTOMER.aggregate([{$lookup:{from:"PRODUCT",localField:"pid",foreignField:"product_id",as:"Product_details"}},{$project:{_id:0,customerName:"$name",productName:{$arrayElemAt:["$Product_details.name",0]},price:{$arrayElemAt:["$Product_details.price",0]}}}])
+[
+  { customerName: 'Nihal K', productName: 'plate', price: 60 },
+  { customerName: 'Jaseem', productName: 'plate', price: 60 },
+  { customerName: 'Roshan', productName: 'plate', price: 60 },
+  { customerName: 'Aysha', productName: 'plate', price: 60 }
+]
+INVOICE> db.CUSTOMER.aggregate([{$lookup:{from:"PRODUCT",localField:"id",foreignField:"cust_id",as:"Product_details"}},{$project:{_id:0,customerName:"$name",productName:{$arrayElemAt:["$Product_details.name",0]},price:{$arrayElemAt:["$Product_details.price",0]}}}])
+[
+  { customerName: 'Nihal K' },
+  { customerName: 'Jaseem' },
+  { customerName: 'Roshan' },
+  { customerName: 'Aysha' }
+]
+INVOICE> db.CUSTOMER.aggregate([{$lookup:{from:"PRODUCT",localField:"id",foreignField:"cus_id",as:"Product_details"}},{$project:{_id:0,customerName:"$name",productName:{$arrayElemAt:["$Product_details.name",0]},price:{$arrayElemAt:["$Product_details.price",0]}}}])
+[
+  { customerName: 'Nihal K', productName: 'plate', price: 60 },
+  { customerName: 'Jaseem', productName: 'pen', price: 10 },
+  { customerName: 'Roshan', productName: 'soap', price: 45 },
+  { customerName: 'Aysha' }
+]
+INVOICE> db.CUSTOMER.aggregate([{ $match: { name: { $regex: "^y", $options: "i" }}}])
+
+
